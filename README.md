@@ -44,6 +44,29 @@ Once we have all these scores, we can test different aspects of the pipeline suc
 5. Evaluate if the retrieval pipeline performs better when both the direct hit and ColBERT models are used together.
 6. Determine the ideal k value that gives the best performance in retrieval using the ColBERT model.
 
+## Direct Hit Model Testing and Fine-Tuning
+
+1. **Initial Recall Rate**: Achieved a recall rate of 77% without thresholds, with the correct match missing from the top 10 results for 23% of documents.
+2. **Model Used**: "mixedbread-ai/mxbai-embed-large-v1."
+3. **Fine-Tuning**: Improved model performance using CosineSimilarityLoss with two training datasets:
+   - Random sentences from the Claude QAC database, rephrased to create positive examples, and other sentences from the same or different contexts as negatives.
+   - Questions from the Claude QAC database, with one rephrase as a positive example and another question as a negative example.
+
+### Results After Fine-Tuning
+
+Fine-tuning slightly decreased recall to 76% but enhanced sensitivity to high thresholds. The fine-tuned model showed improved accuracy under stricter conditions, although it still missed the correct match in 24% of cases. Detailed results are documented in `Output/FineTuneSentenceTransformer/direct_hit_rephrased_results_finetuned_test_question.json`.
+
+## Creating Equivalence Classes
+
+1. **Generating Rephrases**: For each question, four rephrases were generated, varying in syntactical similarity but maintaining the same meaning.
+2. **Utilizing Classes**: These equivalence classes help:
+   - **Check Recall Values**: Evaluate recall for questions with different syntactical similarities.
+   - **Entity-Based Matching**: Consider questions within the same class as a single entity for improved match detection.
+
+**Equivalence Classes**: The equivalence classes generated for questions in the Claude QAC database can be found [here](https://drive.google.com/file/d/1O0ah18DrAt4mOOfgTihQ0QQa2O9MvLyB/view?usp=sharing).
+
+
+
 ## Files
 
 - **Rag_Benchmarking_ClaudeContext.ipynb**: Python notebook to generate QAC triples using Llama and Claude Context.
@@ -56,3 +79,12 @@ Once we have all these scores, we can test different aspects of the pipeline suc
 - **Output/DataGeneration**: Output scores for the direct hit and the retriever module.
 - **Output/llama_output**: Questions obtained from Llama and their count (testqa_count_cleaned.csv).
 - **Output/FineTuneSentenceTransformer**: Data generated for fine-tuning sentence transformer.
+- **EquivalenceClassGeneration.ipynb**: Python notebook for creating equivalence classes.
+- **Output/FineTuneSentenceTransformer/direct_hit_rephrased_results_finetuned.json**: Json file containing the scores obtained from the fine-tuned model
+- **Output/FineTuneSentenceTransformer/direct_hit_rephrased_results_finetuned_test_question.json**: Results containing the question matched to the test question from 
+ finetuned direct hit model.
+  
+
+**Metadata and Index Creation**: Refer to the notebook for generating metadata and creating indexes for ColBERT: [miimansa.ipynb](https://github.com/Miimansa/CARTIS-QAC/blob/main/miimansa.ipynb).
+
+**Documentation**: Detailed documentation available [here](https://docs.google.com/document/d/1rZBpggxBr-sjqmN33ruKrMIhbcya6wmkos7mDYbKCaE/edit?usp=sharing).
